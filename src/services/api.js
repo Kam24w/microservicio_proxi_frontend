@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Cambia esta URL por la URL de tu backend en Railway al desplegar
+// Configura esta URL para apuntar al backend en tu entorno de despliegue
 const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 const api = axios.create({
@@ -17,6 +17,9 @@ export const callService = (service, operation, params = []) =>
 
 export const getSummary = () =>
   api.get('/api/metrics/summary');
+
+export const getHealth = () =>
+  api.get('/api/metrics/health');
 
 export const getLogs = (filters = {}) => {
   const { service, status, from, to, page = 0, size = 20 } = filters;

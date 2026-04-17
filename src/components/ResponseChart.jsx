@@ -11,13 +11,13 @@ const SERVICE_COLORS = {
 };
 
 /**
- * Gráfica de líneas que muestra el tiempo de respuesta
- * de las últimas 20 llamadas por servicio.
+ * Line chart showing latency
+ * for the last 20 requests per service.
  */
 const ResponseChart = ({ services = [] }) => {
   const [activeService, setActiveService] = useState('ALL');
 
-  // Construir dataset combinado (índice 1–20 como eje X)
+  // Build a combined dataset (1-20 as the X axis).
   const buildChartData = () => {
     const maxLen = Math.max(...services.map(s => (s.last20Calls || []).length), 0);
     return Array.from({ length: maxLen }, (_, i) => {
@@ -42,7 +42,7 @@ const ResponseChart = ({ services = [] }) => {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h3 style={{ margin: 0, color: '#1e293b', fontSize: 16 }}>
-          📈 Tiempo de Respuesta — Últimas 20 llamadas
+          Latencia operativa - últimas 20 solicitudes
         </h3>
         <div style={{ display: 'flex', gap: 8 }}>
           {['ALL', ...services.map(s => s.serviceId)].map(svcId => (
@@ -65,13 +65,13 @@ const ResponseChart = ({ services = [] }) => {
 
       {chartData.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 40, color: '#94a3b8' }}>
-          Sin datos aún. Haz clic en "Simular Carga" para generar llamadas.
+          Sin datos aún. Ejecuta tráfico controlado para generar telemetría.
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="index" label={{ value: 'Llamada #', position: 'insideBottom', offset: -2 }} />
+            <XAxis dataKey="index" label={{ value: 'Secuencia', position: 'insideBottom', offset: -2 }} />
             <YAxis label={{ value: 'ms', angle: -90, position: 'insideLeft' }} />
             <Tooltip
               contentStyle={{ borderRadius: 8, fontSize: 12 }}

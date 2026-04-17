@@ -8,7 +8,7 @@ const STATUS_STYLE = {
 };
 
 /**
- * Tabla de logs en tiempo real con:
+ * Real-time event table with:
  * - Polling cada 3 segundos
  * - Filtros por servicio, estado y rango de fechas
  * - Paginación
@@ -41,9 +41,9 @@ const LogsTable = () => {
     <div style={{ background: '#fff', borderRadius: 16, padding: 24, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h3 style={{ margin: 0, color: '#1e293b' }}>
-          📋 Logs en Tiempo Real
+          Eventos en tiempo real
           <span style={{ marginLeft: 8, fontSize: 13, color: '#94a3b8', fontWeight: 400 }}>
-            ({total} registros) · polling cada 3s
+            ({total} registros) · actualización cada 3s
           </span>
         </h3>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -52,7 +52,7 @@ const LogsTable = () => {
         </div>
       </div>
 
-      {/* Filtros */}
+      {/* Filters */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
         <select
           value={filters.service}
@@ -94,19 +94,19 @@ const LogsTable = () => {
           onClick={() => { setFilters({ service: '', status: '', from: '', to: '' }); setPage(0); }}
           style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', color: '#64748b', fontSize: 13 }}
         >
-          Limpiar
+          Reiniciar
         </button>
       </div>
 
       {/* Error / Loading */}
       {error && <div style={{ color: '#dc2626', marginBottom: 12, fontSize: 13 }}>⚠ {error}</div>}
 
-      {/* Tabla */}
+      {/* Table */}
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
             <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
-              {['RequestId', 'Servicio', 'Operación', 'Duración', 'Estado', 'Timestamp'].map(h => (
+              {['Trace ID', 'Servicio', 'Operación', 'Duración', 'Estado', 'Fecha'].map(h => (
                 <th key={h} style={{ padding: '10px 12px', textAlign: 'left', color: '#64748b', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                   {h}
                 </th>
@@ -115,9 +115,9 @@ const LogsTable = () => {
           </thead>
           <tbody>
             {loading && logs.length === 0 ? (
-              <tr><td colSpan={6} style={{ textAlign: 'center', padding: 32, color: '#94a3b8' }}>Cargando...</td></tr>
+              <tr><td colSpan={6} style={{ textAlign: 'center', padding: 32, color: '#94a3b8' }}>Cargando eventos...</td></tr>
             ) : logs.length === 0 ? (
-              <tr><td colSpan={6} style={{ textAlign: 'center', padding: 32, color: '#94a3b8' }}>Sin logs. Usa "Simular Carga" para generar datos.</td></tr>
+              <tr><td colSpan={6} style={{ textAlign: 'center', padding: 32, color: '#94a3b8' }}>Sin eventos. Ejecuta tráfico controlado para poblar la vista.</td></tr>
             ) : (
               logs.map(log => (
                 <React.Fragment key={log.requestId}>
@@ -154,24 +154,24 @@ const LogsTable = () => {
                     </td>
                   </tr>
 
-                  {/* Detalle expandible */}
+                  {/* Expandable details */}
                   {expandedId === log.requestId && (
                     <tr>
                       <td colSpan={6} style={{ padding: 0 }}>
                         <div style={{ background: '#f8fafc', borderLeft: '4px solid #6366f1', padding: 16, fontSize: 12 }}>
                           <strong style={{ color: '#1e293b', display: 'block', marginBottom: 8 }}>
-                            🔍 Detalles — {log.requestId}
+                            Detalles del evento - {log.requestId}
                           </strong>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                             <div>
-                              <p style={{ margin: '0 0 4px', color: '#64748b', fontWeight: 600 }}>Parámetros de entrada</p>
+                              <p style={{ margin: '0 0 4px', color: '#64748b', fontWeight: 600 }}>Entrada</p>
                               <pre style={preStyle}>
                                 {JSON.stringify(log.inputParams || [], null, 2)}
                               </pre>
                             </div>
                             <div>
                               <p style={{ margin: '0 0 4px', color: '#64748b', fontWeight: 600 }}>
-                                {log.status === 'ERROR' ? 'Error' : 'Respuesta completa'}
+                                {log.status === 'ERROR' ? 'Incidencia' : 'Salida'}
                               </p>
                               <pre style={{ ...preStyle, color: log.status === 'ERROR' ? '#dc2626' : '#1e293b' }}>
                                 {log.status === 'ERROR'
@@ -191,7 +191,7 @@ const LogsTable = () => {
         </table>
       </div>
 
-      {/* Paginación */}
+      {/* Pagination */}
       {totalPages > 1 && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 16 }}>
           <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} style={pageBtnStyle(page === 0)}>

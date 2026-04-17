@@ -1,9 +1,9 @@
 import React from 'react';
 
 const SERVICE_ICONS = {
-  INVENTORY: '📦',
-  ORDERS:    '🛒',
-  PAYMENTS:  '💳',
+  INVENTORY: 'IN',
+  ORDERS:    'OR',
+  PAYMENTS:  'PM',
 };
 
 const SERVICE_COLORS = {
@@ -13,12 +13,12 @@ const SERVICE_COLORS = {
 };
 
 /**
- * Tarjeta de servicio con métricas clave.
- * Se resalta en rojo si la tasa de error supera el 15%.
+ * Service card with key operational metrics.
+ * Highlights in red when error rate exceeds 15%.
  */
 const ServiceCard = ({ service }) => {
   const { serviceId, totalCalls, successCount, errorCount,
-          errorRate, avgDurationMs, hasProblems } = service;
+          errorRate, avgDurationMs, hasProblems, slowestCall } = service;
 
   const icon  = SERVICE_ICONS[serviceId]  || '⚙️';
   const color = SERVICE_COLORS[serviceId] || '#6366f1';
@@ -40,7 +40,7 @@ const ServiceCard = ({ service }) => {
         ? '0 4px 20px rgba(239,68,68,0.25)'
         : '0 4px 20px rgba(0,0,0,0.08)',
     }}>
-      {/* Indicador de problema */}
+      {/* Problem indicator */}
       {hasProblems && (
         <div style={{
           position: 'absolute', top: 12, right: 12,
@@ -64,21 +64,36 @@ const ServiceCard = ({ service }) => {
             color: hasProblems ? '#dc2626' : '#64748b',
             textTransform: 'uppercase',
           }}>
-            Microservicio
+            Servicio
           </span>
         </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        <Metric label="Total Llamadas" value={totalCalls}     color="#1e293b" />
-        <Metric label="Tasa de Éxito"  value={`${successRate}%`} color="#16a34a" />
-        <Metric label="Errores"        value={errorCount}     color={errorCount > 0 ? '#dc2626' : '#64748b'} />
-        <Metric label="Tasa de Error"  value={`${errorRate}%`} color={hasProblems ? '#dc2626' : '#64748b'} />
-        <Metric label="Avg Respuesta"  value={`${avgDurationMs}ms`} color="#7c3aed" />
-        <Metric label="Exitosas"       value={successCount}   color="#16a34a" />
+        <Metric label="Solicitudes" value={totalCalls}     color="#1e293b" />
+        <Metric label="Disponibilidad"  value={`${successRate}%`} color="#16a34a" />
+        <Metric label="Incidentes"        value={errorCount}     color={errorCount > 0 ? '#dc2626' : '#64748b'} />
+        <Metric label="Error rate"  value={`${errorRate}%`} color={hasProblems ? '#dc2626' : '#64748b'} />
+        <Metric label="Latencia media"  value={`${avgDurationMs}ms`} color="#0f766e" />
+        <Metric label="Resueltas"       value={successCount}   color="#16a34a" />
       </div>
 
-      {/* Barra de progreso de éxito */}
+      {slowestCall && (
+        <div style={{
+          marginTop: 16,
+          padding: '12px 14px',
+          borderRadius: 12,
+          background: '#fff',
+          border: '1px solid rgba(148,163,184,0.25)',
+          fontSize: 12,
+          color: '#334155',
+        }}>
+          <strong style={{ display: 'block', marginBottom: 4, color }}>Ruta más lenta</strong>
+          {slowestCall.operation} · {slowestCall.durationMs}ms · {slowestCall.status}
+        </div>
+      )}
+
+      {/* Success progress bar */}
       <div style={{ marginTop: 16 }}>
         <div style={{ background: '#e2e8f0', borderRadius: 8, height: 6, overflow: 'hidden' }}>
           <div style={{
